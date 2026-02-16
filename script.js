@@ -1,4 +1,3 @@
-```javascript
 // မြစ်ကြီးနားမြို့ရဲ့ ကိုဩဒိနိတ်
 const myitkyinaCenter = [25.3833, 97.3833];
 
@@ -9,7 +8,6 @@ window.addEventListener('load', function() {
     if (!mapDiv) {
         alert('မြေပုံအတွက် နေရာမတွေ့ပါ');
         return;
-
     }
 
     try {
@@ -27,9 +25,7 @@ window.addEventListener('load', function() {
 
         console.log('မြေပုံအောင်မြင်စွာဖော်ပြပြီး');
     } catch(error) {
-
         console.error('အမှားရှိနေသည်:', error);
         alert('မြေပုံဖော်ပြရာတွင် အမှားရှိနေသည်။ Console ကိုစစ်ပါ။');
     }
 });
-```
