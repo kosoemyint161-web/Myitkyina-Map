@@ -29,3 +29,17 @@ window.addEventListener('load', function() {
         alert('မြေပုံဖော်ပြရာတွင် အမှားရှိနေသည်။ Console ကိုစစ်ပါ။');
     }
 });
+// ဆက်သွယ်ရန် button
+document.addEventListener('DOMContentLoaded', function() {
+    const contactBtn = document.getElementById('contactBusinessBtn');
+    if (contactBtn) {
+        contactBtn.addEventListener('click', function() {
+            const message = 'ကိုယ့်လုပ်ငန်းကို မြေပုံပေါ်တင်လိုပါက ကျေးဇူးပြု၍ ဆက်သွယ်ပါ။\n\n' +
+                           '📞 ဖုန်း: ၀၉-၂၆၇၂၉၈၅၈၄\n' +
+                           '✉️ Email: info@myitkyinamap.com\n' +
+                           '📱 Facebook: Myitkyina Map\n\n' +
+                           'ကျေးဇူးတင်ပါသည်။';
+            alert(message);
+        });
+    }
+});
