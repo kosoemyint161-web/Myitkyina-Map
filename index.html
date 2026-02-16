@@ -1,168 +1,64 @@
 ```html
+<link href="https://fonts.googleapis.com/css2?family=Padauk&family=Pyidaungsu&display=swap" rel="stylesheet">
+
+```
+
+၂။ Leaflet Routing Machine မှား
+
+အမှား - CSS ဖိုင်ကို JavaScript အနေနဲ့ ခေါ်ထားတယ်။
+
+ပြင်ဆင်ရန် -
+
+```html
+<!-- Leaflet Routing Machine CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+<!-- Leaflet Routing Machine JavaScript -->
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+```
+
+
+၃။ Body Tag နေရာမှား
+
+အမှား - <body> tag က <head> ထဲမှာရောက်နေတယ်။
+
+ပြင်ဆင်ရန် - <body> ကို </head> ရဲ့အောက်ကိုရွှေ့ပါ။
+
+ပြင်ဆင်ပြီးသား HTML အပြည့်အစုံ
+
+```html
 <!DOCTYPE html>
 <html lang="my">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Myitkyina Map - မြစ်ကြီးနားမြေပုံ</title>
-    
-    <!-- CSS ဖိုင်ချိတ်ဆက်ခြင်း -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Google Fonts အတွက် (မြန်မာစာလှလှလေးဖို့) -->
 
+
+    <!-- CSS ဖိုင် -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts (မြန်မာစာအတွက်) -->
     <link href="https://fonts.googleapis.com/css2?family=Padauk&family=Pyidaungsu&display=swap" rel="stylesheet">
-    
+
     <!-- Leaflet CSS (OSM မြေပုံအတွက်) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <!-- Leaflet JavaScript (OSM မြေပုံဆွဲဖို့) -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- Leaflet Routing Machine (လမ်းကြောင်းပြဖို့) -->
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-
 
-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <!-- Leaflet JavaScript (OSM မြေပုံအတွက်) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet Routing Machine CSS -->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+    <!-- Leaflet Routing Machine JavaScript -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 </head>
 <body>
-    <!-- ခေါင်းစဉ်ပိုင်း -->
-    <header>
-        <div class="header-container">
-            <h1>Myitkyina Map</h1>
-            <p class="subtitle">မြစ်ကြီးနားမြေပုံ - မြို့နေပြည်သူများအတွက် လမ်းညွှန်</p>
-        </div>
-        <div class="language-switch">
-            <button class="lang-btn active">မြန်မာ</button>
-            <button class="lang-btn">English</button>
-        </div>
-    </header>
+    <!-- မြေပုံအတွက် နေရာ -->
+    <div id="map" style="height: 500px; width: 100%;"></div>
 
-    <!-- ရှာဖွေရေးပိုင်း -->
-    <section class="search-section">
-
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="နေရာအမည်၊ လိပ်စာ ရိုက်ထည့်ပါ...">
-            <button id="searchBtn">ရှာဖွေမည်</button>
-        </div>
-    </section>
-
-    <!-- အမျိုးအစားများ -->
-    <section class="categories-section">
-        <h2>အမျိုးအစားအလိုက် ရှာဖွေရန်</h2>
-        <div class="categories-grid" id="categoryButtons">
-            <button class="category-btn" data-category="restaurant">🍜 စားသောက်ဆိုင်</button>
-            <button class="category-btn" data-category="hospital">🏥 ဆေးရုံ/ဆေးခန်း</button>
-            <button class="category-btn" data-
-
-category="property">🏠 အိမ်ခြံမြေ</button>
-            <button class="category-btn" data-category="market">🛒 ဈေးများ</button>
-            <button class="category-btn" data-category="hotel">🏨 ဟိုတယ်</button>
-            <button class="category-btn" data-category="bank">🏦 ဘဏ်များ</button>
-            <button class="category-btn" data-category="school">📚 ကျောင်းများ</button>
-            <button class="category-btn" data-category="government">🏛️ အစိုးရရုံး</button>
-        </div>
-    </section>
-
-    <!-- မြေပုံပိုင်း -->
-    <section class="map-section">
-        <div class="map-container">
-            <div id="map" style="height: 500px; width: 100%;"></div>
-        </div>
-
-    </section>
-
-    <!-- လုပ်ငန်းရှင်များအတွက် ကြော်ငြာပိုင်း -->
-    <section class="business-section">
-        <div class="business-container">
-            <h2>ကိုယ့်လုပ်ငန်းကို မြေပုံပေါ်တင်လိုပါသလား?</h2>
-            <p>မြစ်ကြီးနားမြို့က သင့်လုပ်ငန်းကို လူအများသိအောင် ကြော်ငြာပါ။</p>
-            <div class="business-benefits">
-                <div class="benefit">
-                    <span class="benefit-icon">📍</span>
-                    <h3>တည်နေရာအတိအကျ</h3>
-                    <p>သင့်လုပ်ငန်းနေရာကို မြေပုံပေါ်မှာ အတိအကျပြသနိုင်</p>
-                </div>
-                <div class="benefit">
-                    <span class="benefit-icon">📞</span>
-                    <h3>ဆက်သွယ်ရန်အချက်အလက်</
-
-h3>
-                    <p>ဖုန်းနံပါတ်၊ လိပ်စာ၊ ဖွင့်ချိန်များထည့်နိုင်</p>
-                </div>
-                <div class="benefit">
-                    <span class="benefit-icon">📸</span>
-                    <h3>ဓာတ်ပုံများ</h3>
-                    <p>သင့်ဆိုင်ရဲ့ဓာတ်ပုံတွေပါ ထည့်သွင်းနိုင်</p>
-                </div>
-            </div>
-            <div class="business-pricing">
-                <h3>ကြော်ငြာနှုန်းထားများ</h3>
-                <table class="price-table">
-                    <tr>
-                        <th>အမျိုးအစား</th>
-                        <th>ဈေးနှုန်း/လ</th>
-                    </tr>
-                    <tr>
-                        <td>အခြေခံကြော်ငြာ</td>
-
-                        <td>၅,၀၀၀ ကျပ်</td>
-                    </tr>
-                    <tr>
-                        <td>ရွှေရောင်ကြော်ငြာ (ဓာတ်ပုံပါ)</td>
-                        <td>၁၀,၀၀၀ ကျပ်</td>
-                    </tr>
-                    <tr>
-                        <td>ပလက်တီနမ်ကြော်ငြာ (ထိပ်ဆုံး)</td>
-                        <td>၂၀,၀၀၀ ကျပ်</td>
-                    </tr>
-                </table>
-            </div>
-            <button id="contactBusinessBtn" class="contact-btn">ဆက်သွယ်ရန်</button>
-        </div>
-    </section>
-
-    <!-- မြစ်ကြီးနားမြို့အကြောင်း -->
-    <section class="about-section">
-
-        <div class="about-container">
-            <h2>မြစ်ကြီးနားမြို့အကြောင်း</h2>
-            <p>မြစ်ကြီးနားမြို့သည် ကချင်ပြည်နယ်၏ မြို့တော်ဖြစ်ပြီး ဧရာဝတီမြစ်ကမ်းပေါ်တွင် တည်ရှိသည်။ မြန်မာနိုင်ငံ၏ မြောက်ဖျားအကျဆုံးမြို့များထဲမှ တစ်ခုဖြစ်ကာ တရုတ်နိုင်ငံနှင့် နယ်နိမိတ်ချင်းထိစပ်နေသည်။</p>
-        </div>
-    </section>
-
-    <!-- ဆက်သွယ်ရန်နှင့် အောက်ခြေပိုင်း -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>Myitkyina Map</h3>
-                <p>မြစ်ကြီးနားမြို့အတွက် ပထမဆုံး ဒေသတွင်းမြေပုံဝန်ဆောင်မှု</p>
-            </div>
-            <div class="footer-section">
-                <h4>ဆက်သွယ်ရန်</h4>
-                <p>📞 ၀၉-၂၆၇၂၉၈၅၈၄</p>
-
-                <p>✉️ info@myitkyinamap.com</p>
-                <p>📱 Facebook: Myitkyina Map</p>
-            </div>
-            <div class="footer-section">
-                <h4>လင့်ခ်များ</h4>
-                <ul>
-                    <li><a href="#">ပင်မစာမျက်နှာ</a></li>
-                    <li><a href="#">ကြော်ငြာရန်</a></li>
-                    <li><a href="#">ဆက်သွယ်ရန်</a></li>
-                    <li><a href="#">အမေးအဖြေများ</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2026 Myitkyina Map. All 
-
-rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- JavaScript ဖိုင်ချိတ်ဆက်ခြင်း (ဒီမှာ OSM အတွက် JS ကိုသုံးမယ်) -->
+    <!-- JavaScript ဖိုင် -->
     <script src="script.js"></script>
 </body>
 </html>
