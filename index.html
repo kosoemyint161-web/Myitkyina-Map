@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Myitkyina Map - မြစ်ကြီးနားလမ်းညွှန်</title>
-    
+    <title>Kachin State Map - Myitkyina & Beyond</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-
     <header>
         <div class="header-container">
-            <h1>Myitkyina Map</h1>
-            <p class="subtitle">မြစ်ကြီးနားမြို့ပြ မြေပုံနှင့် လမ်းညွှန်</p>
+            <h1>Kachin State Map</h1>
+            <p class="subtitle">ကချင်ပြည်နယ်မြေပုံနှင့် လမ်းညွှန်</p>
         </div>
         <div class="language-switch">
             <button class="lang-btn active">မြန်မာ</button>
@@ -24,40 +23,63 @@
 
     <section class="search-section">
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="ရပ်ကွက် (သို့) လုပ်ငန်းအမည် ရှာရန်...">
+            <select id="townshipSelect">
+                <option value="myitkyina">မြစ်ကြီးနား (Myitkyina)</option>
+                <option value="waingmaw">ဝိုင်းမော် (Waingmaw)</option>
+                <option value="mogaung">မိုးကောင်း (Mogaung)</option>
+                <option value="bhamo">ဗန်းမော် (Bhamo)</option>
+                <option value="putao">ပူတာအို (Putao)</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="လုပ်ငန်းအမည် သို့မဟုတ် ရပ်ကွက်...">
             <button id="searchBtn">ရှာဖွေမည်</button>
         </div>
     </section>
 
     <section class="categories-section">
         <div class="categories-grid">
-            <button class="category-btn" data-category="all">🌐 အားလုံး</button>
+            <button class="category-btn active" data-category="all">🌐 အားလုံး</button>
             <button class="category-btn" data-category="restaurant">🍜 စားသောက်ဆိုင်</button>
             <button class="category-btn" data-category="hospital">🏥 ဆေးရုံ/ဆေးခန်း</button>
             <button class="category-btn" data-category="market">🛒 ဈေးများ</button>
             <button class="category-btn" data-category="bank">🏦 ဘဏ်များ</button>
+            <button class="category-btn" data-category="hotel">🏨 ဟိုတယ်/တည်းခိုခန်း</button>
+            <button class="category-btn" data-category="government">🏛️ အစိုးရရုံးများ</button>
+            <button class="category-btn" data-category="property">🏠 အိမ်ခြံမြေ</button>
+            <button class="category-btn" data-category="religion">🙏 ဘာသာရေးကျောင်း</button>
+            <button class="category-btn" data-category="school">📚 ကျောင်းများ</button>
+            <button class="category-btn" data-category="bus">🚌 ကားဂိတ်များ</button>
+            <button class="category-btn" data-category="phone">📱 ဖုန်းဆိုင်များ</button>
         </div>
     </section>
 
-    <div id="map"></div>
+    <section class="map-section">
+        <div id="map"></div>
+    </section>
 
     <section class="business-section">
         <div class="business-container">
             <h2>သင့်လုပ်ငန်းကို မြေပုံပေါ်တင်လိုပါသလား?</h2>
-            <div class="business-benefits">
-                <div class="benefit"><span>📍</span><h3>တည်နေရာပြ</h3></div>
-                <div class="benefit"><span>📞</span><h3>ဆက်သွယ်ရန်</h3></div>
-                <div class="benefit"><span>📸</span><h3>ဓာတ်ပုံပြ</h3></div>
+            <div class="pricing-cards">
+                <div class="card">
+                    <h3>Regular</h3>
+                    <p class="price">၅,၀၀၀ ကျပ် / လ</p>
+                    <ul><li>အမည်၊ လိပ်စာ၊ တည်နေရာ</li></ul>
+                </div>
+                <div class="card gold">
+                    <h3>Gold</h3>
+                    <p class="price">၁၀,၀၀၀ ကျပ် / လ</p>
+                    <ul><li>ဖုန်းနံပါတ် နှင့် ဓာတ်ပုံ (၁) ပုံ</li></ul>
+                </div>
+                <div class="card platinum">
+                    <h3>Platinum</h3>
+                    <p class="price">၁၅,၀၀၀ ကျပ် / လ</p>
+                    <ul><li>ထိပ်ဆုံးတွင်ပြသခြင်း နှင့် ဓာတ်ပုံစုံ</li></ul>
+                </div>
             </div>
-            <button id="contactBusinessBtn" class="contact-btn">၀၉-၄၅၈၄၃၄၃၉၈ သို့ ဆက်သွယ်ရန်</button>
+            <button id="contactBusinessBtn" class="contact-btn">📞 ဆက်သွယ်ရန်: ၀၉-၂၆၇၂၉၈၅၈၄</button>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 Myitkyina Map Development Team. Kachin State, Myanmar.</p>
-    </footer>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,72 +1,36 @@
-const MYITKYINA_CENTER = [25.3833, 97.3833];
-let map, userMarker;
-let markers = [];
+// မြို့နယ်များ၏ တည်နေရာများ
+const TOWNSHIPS = {
+    myitkyina: [25.3833, 97.3833],
+    waingmaw: [25.3562, 97.4332],
+    mogaung: [25.3045, 96.9408],
+    bhamo: [24.2647, 97.2346],
+    putao: [27.3291, 97.4042]
+};
 
-// နမူနာ Data (နောင်တွင် Database မှ ဆွဲယူရန်)
-const locations = [
-    { id: 1, name: "မြစ်ကြီးနားဆေးရုံကြီး", lat: 25.3892, lng: 97.3875, cat: "hospital" },
-    { id: 2, name: "မြစ်ကြီးနားဈေးကြီး", lat: 25.3812, lng: 97.3980, cat: "market" },
-    { id: 3, name: "Kiss Me စားသောက်ဆိုင်", lat: 25.3850, lng: 97.3910, cat: "restaurant" }
-];
+let map = L.map('map').setView(TOWNSHIPS.myitkyina, 13);
 
-function initMap() {
-    map = L.map('map').setView(MYITKYINA_CENTER, 14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
+// မြို့နယ်ရွေးချယ်မှု ပြောင်းလဲခြင်း
+document.getElementById('townshipSelect').addEventListener('change', function(e) {
+    const coords = TOWNSHIPS[e.target.value];
+    map.flyTo(coords, 14); // မြေပုံကို အလိုလို ရွှေ့ပေးမည်
+    L.marker(coords).addTo(map).bindPopup(e.target.options[e.target.selectedIndex].text).openPopup();
+});
 
-    displayMarkers('all');
-    getUserLocation();
-}
-
-function displayMarkers(category) {
-    // အဟောင်းများကို ဖျက်ပါ
-    markers.forEach(m => map.removeLayer(m));
-    markers = [];
-
-    locations.forEach(loc => {
-        if (category === 'all' || loc.cat === category) {
-            const m = L.marker([loc.lat, loc.lng])
-                .bindPopup(`<b>${loc.name}</b><br>${loc.cat}`)
-                .addTo(map);
-            markers.push(m);
-        }
+// Category Filter Logic
+const buttons = document.querySelectorAll('.category-btn');
+buttons.forEach(btn => {
+    btn.addEventListener('click', function() {
+        buttons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        console.log("Filtering: " + this.dataset.category);
     });
-}
+});
 
-function getUserLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            const { latitude, longitude } = pos.coords;
-            if (userMarker) map.removeLayer(userMarker);
-            userMarker = L.circleMarker([latitude, longitude], { color: 'blue', radius: 10 }).addTo(map)
-                .bindPopup("သင်ရှိနေသောနေရာ").openPopup();
-        });
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initMap();
-
-    // Category Filtering
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            displayMarkers(this.dataset.category);
-        });
-    });
-
-    // Search Logic (Basic)
-    document.getElementById('searchBtn').addEventListener('click', () => {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const found = locations.find(l => l.name.toLowerCase().includes(query));
-        if (found) {
-            map.flyTo([found.lat, found.lng], 16);
-            L.popup().setLatLng([found.lat, found.lng]).setContent(found.name).openOn(map);
-        } else {
-            alert("ရှာမတွေ့ပါ။");
-        }
-    });
+// Contact Button
+document.getElementById('contactBusinessBtn').addEventListener('click', () => {
+    window.location.href = "tel:09267298584";
 });
