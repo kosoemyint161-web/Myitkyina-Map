@@ -1,4 +1,7 @@
-// ၁။ မြို့နယ်အားလုံး၏ တည်နေရာများ
+// ၁။ သင့်ရဲ့ Google Sheet CSV Link
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiAnasNC6vLjb4IChJ5Vzj_GLcRKGBx8q-22DUsquCeuzCzfdNxG821SfCnWnA83-q2AdeqTiJLuOn/pub?output=csv";
+
+// ၂။ မြို့နယ်အားလုံး၏ တည်နေရာများ
 const TOWNSHIPS = {
     myitkyina: [25.3833, 97.3833],
     waingmaw: [25.3562, 97.4332],
@@ -25,7 +28,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// ၂။ Marker အရောင်များ သတ်မှတ်ခြင်း
+// ၃။ Marker အရောင် (၁၁) မျိုး သတ်မှတ်ခြင်း
 const createIcon = (color) => {
     return new L.Icon({
         iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
@@ -47,32 +50,60 @@ const icons = {
     market: createIcon('violet'),
     property: createIcon('purple'),
     religion: createIcon('blue'),
-    bus: createIcon('darkBlue'),
+    bus: createIcon('black'), // darkBlue မရှိသောကြောင့် အနီးစပ်ဆုံး black သုံးထားပါသည်
     government: createIcon('red')
 };
 
-// ၃။ လုပ်ငန်းဒေတာများ
-const locations = [
-    { name: "မြစ်ကြီးနား အထွေထွေရောဂါကု ဆေးရုံကြီး", type: "hospital", lat: 25.39343, lng: 97.39531, phone: "074-21011" },
-    { name: "Kiss Me စားသောက်ဆိုင်", type: "restaurant", lat: 25.37895, lng: 97.40142, phone: "09-xxxxxxx" },
-    { name: "KBZ Bank", type: "bank", lat: 25.38521, lng: 97.38465, phone: "09-xxxxxxx" }
-];
+let locations = []; // Sheet ထဲက data များ သိမ်းရန်
 
-// Marker များချခြင်းနှင့် Autocomplete List ဖြည့်ခြင်း
-const dataList = document.getElementById('locationList');
-locations.forEach(loc => {
-    L.marker([loc.lat, loc.lng], { icon: icons[loc.type] || icons.bank })
-        .addTo(map)
-        .bindPopup(`<b>${loc.name}</b><br>📞 ${loc.phone}`);
+// ၄။ Google Sheet မှ ဒေတာဆွဲယူသည့် Function
+async function loadDataFromSheet() {
+    try {
+        const response = await fetch(sheetUrl);
+        const csvData = await response.text();
+        const rows = csvData.split('\n').slice(1); // Header ကို ဖယ်ထုတ်သည်
+        
+        const dataList = document.getElementById('locationList');
+        dataList.innerHTML = ''; 
 
-    const option = document.createElement('option');
-    option.value = loc.name;
-    dataList.appendChild(option);
-});
+        rows.forEach(row => {
+            // Comma ခွဲရာတွင် ပိုမိုတိကျစေရန် regex သုံးသည်
+            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            
+            if (columns.length >= 4) {
+                const name = columns[0].replace(/"/g, "").trim();
+                const type = columns[1].replace(/"/g, "").trim();
+                const lat = parseFloat(columns[2]);
+                const lng = parseFloat(columns[3]);
+                const phone = columns[7]?.replace(/"/g, "").trim() || "ဆက်သွယ်ရန်မရှိ";
 
-// ၄။ ရှာဖွေခြင်းနှင့် မြို့နယ်ရွေးချယ်ခြင်း Logic
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    // Marker များ မြေပုံပေါ်တင်ခြင်း
+                    L.marker([lat, lng], { icon: icons[type] || icons.bank })
+                        .addTo(map)
+                        .bindPopup(`<b>${name}</b><br>အမျိုးအစား: ${type}<br>📞 ${phone}`);
+
+                    // Search Box အတွက် Dropdown ထဲထည့်ခြင်း
+                    const option = document.createElement('option');
+                    option.value = name;
+                    dataList.appendChild(option);
+                    
+                    // ရှာဖွေမှုအတွက် locations ထဲ သိမ်းခြင်း
+                    locations.push({ name, lat, lng, type, phone });
+                }
+            }
+        });
+        console.log("ဒေတာများ အောင်မြင်စွာ Load လုပ်ပြီးပါပြီ။");
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
+}
+
+// ၅။ Interaction Logic
 document.getElementById('townshipSelect').addEventListener('change', function(e) {
-    map.flyTo(TOWNSHIPS[e.target.value], 14);
+    if (TOWNSHIPS[e.target.value]) {
+        map.flyTo(TOWNSHIPS[e.target.value], 14);
+    }
 });
 
 document.getElementById('searchBtn').addEventListener('click', function() {
@@ -81,8 +112,14 @@ document.getElementById('searchBtn').addEventListener('click', function() {
     
     if (target) {
         map.flyTo([target.lat, target.lng], 17);
-        L.popup().setLatLng([target.lat, target.lng]).setContent(`<b>${target.name}</b>`).openOn(map);
+        L.popup()
+            .setLatLng([target.lat, target.lng])
+            .setContent(`<b>${target.name}</b>`)
+            .openOn(map);
     } else {
         alert("တောင်းပန်ပါသည်။ ရှာမတွေ့ပါ။ စာလုံးပေါင်းကို ပြန်စစ်ပေးပါ။");
     }
 });
+
+// စတင်သည်နှင့် ဒေတာကို ဆွဲယူရန် ခေါ်ယူခြင်း
+loadDataFromSheet();
