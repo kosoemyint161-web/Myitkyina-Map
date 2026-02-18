@@ -38,17 +38,24 @@ const createIcon = (color) => {
 };
 
 const icons = {
+    restaurant: createIcon('yellow'),
     hospital: createIcon('red'),
-    restaurant: createIcon('green'),
-    bank: createIcon('blue'),
-    school: createIcon('gold')
+    bank: createIcon('brown'),
+    school: createIcon('green'),
+    phone: createIcon('violet'),
+    hotel: createIcon('orange'),
+    market: createIcon('violet'),
+    property: createIcon('purple'),
+    religion: createIcon('blue'),
+    bus: createIcon('darkBlue'),
+    government: createIcon('red')
 };
 
 // ၃။ လုပ်ငန်းဒေတာများ
 const locations = [
-    { name: "မြစ်ကြီးနား အထွေထွေရောဂါကု ဆေးရုံကြီး", type: "hospital", lat: 25.3885, lng: 97.3952, phone: "074-21011" },
-    { name: "Kiss Me စားသောက်ဆိုင်", type: "restaurant", lat: 25.3792, lng: 97.4010, phone: "09-xxxxxxx" },
-    { name: "KBZ Bank", type: "bank", lat: 25.3833, lng: 97.3833, phone: "09-xxxxxxx" }
+    { name: "မြစ်ကြီးနား အထွေထွေရောဂါကု ဆေးရုံကြီး", type: "hospital", lat: 25.39343, lng: 97.39531, phone: "074-21011" },
+    { name: "Kiss Me စားသောက်ဆိုင်", type: "restaurant", lat: 25.37895, lng: 97.40142, phone: "09-xxxxxxx" },
+    { name: "KBZ Bank", type: "bank", lat: 25.38521, lng: 97.38465, phone: "09-xxxxxxx" }
 ];
 
 // Marker များချခြင်းနှင့် Autocomplete List ဖြည့်ခြင်း
