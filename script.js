@@ -66,29 +66,28 @@ async function loadDataFromSheet() {
         const dataList = document.getElementById('locationList');
         dataList.innerHTML = ''; 
 
-        rows.forEach(row => {
-            // Comma ခွဲရာတွင် ပိုမိုတိကျစေရန် regex သုံးသည်
+rows.forEach(row => {
             const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             
             if (columns.length >= 4) {
-                const name = columns[0].replace(/"/g, "").trim();
+                // Column A(0)=Name, B(1)=Type, C(2)=Lat, D(3)=Lng, H(7)=Phone
+                const name = columns[0].replace(/"/g, "").trim(); 
                 const type = columns[1].replace(/"/g, "").trim();
                 const lat = parseFloat(columns[2]);
                 const lng = parseFloat(columns[3]);
                 const phone = columns[7]?.replace(/"/g, "").trim() || "ဆက်သွယ်ရန်မရှိ";
 
                 if (!isNaN(lat) && !isNaN(lng)) {
-                    // Marker များ မြေပုံပေါ်တင်ခြင်း
+                    // Marker ချခြင်း
                     L.marker([lat, lng], { icon: icons[type] || icons.bank })
                         .addTo(map)
-                        .bindPopup(`<b>${name}</b><br>အမျိုးအစား: ${type}<br>📞 ${phone}`);
+                        .bindPopup(`<b>${name}</b><br>📞 ${phone}`);
 
-                    // Search Box အတွက် Dropdown ထဲထည့်ခြင်း
+                    // Search List ထဲထည့်ခြင်း
                     const option = document.createElement('option');
                     option.value = name;
-                    dataList.appendChild(option);
+                    document.getElementById('locationList').appendChild(option);
                     
-                    // ရှာဖွေမှုအတွက် locations ထဲ သိမ်းခြင်း
                     locations.push({ name, lat, lng, type, phone });
                 }
             }
