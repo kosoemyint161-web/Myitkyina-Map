@@ -1,5 +1,5 @@
 // ၁။ Google Sheet CSV Link
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiAnasNC6vLjb4IChJ5Vzj_GLcRKGBx8q-22DUsqCeuzCzfdNxG821SfCnWnaA83-q2AdeqTiJLu0n/pub?output=csv";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiAnasNC6vLjb4lChJ5Vzj_GLcRKGBx8q-22DUsqCeuzCzfdNxG821SfCnWnaA83-q2AdeqTiJLu0n/pub?output=csv";
 
 // ၂။ မြို့နယ်ဗဟိုချက်များ
 const TOWNSHIPS = {
@@ -26,7 +26,7 @@ const TOWNSHIPS = {
 const map = L.map('map').setView(TOWNSHIPS.myitkyina, 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-// ၄။ Marker Icon Generator
+// ၄။ Icon Generator
 const createIcon = (color) => new L.Icon({
     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -36,7 +36,6 @@ const createIcon = (color) => new L.Icon({
     shadowSize: [41, 41]
 });
 
-// ၅။ Icon အရောင်သတ်မှတ်ချက်များ
 const icons = {
     restaurant: createIcon('yellow'),
     hospital: createIcon('red'),
@@ -51,10 +50,9 @@ const icons = {
     government: createIcon('red')
 };
 
-let locations = []; 
-let allMarkers = []; // Filter လုပ်ရန် Marker အားလုံးကို သိမ်းဆည်းမည့်နေရာ
+let allMarkers = [];
 
-// ၆။ ဒေတာဖတ်ခြင်းနှင့် မြေပုံပေါ်တင်ခြင်း
+// ၅။ ဒေတာဖတ်ယူခြင်း
 function loadDataFromSheet() {
     Papa.parse(sheetUrl, {
         download: true,
@@ -63,12 +61,7 @@ function loadDataFromSheet() {
         complete: function(results) {
             const data = results.data;
             const dataList = document.getElementById('locationList');
-            dataList.innerHTML = ''; 
-            
-            // အသစ်ပြန်ဖတ်တိုင်း အဟောင်းများကို ရှင်းထုတ်ခြင်း
-            allMarkers.forEach(item => map.removeLayer(item.marker));
-            allMarkers = [];
-            locations = [];
+            if(dataList) dataList.innerHTML = ''; 
 
             data.forEach(row => {
                 const name = (row.name || '').trim();
@@ -79,45 +72,49 @@ function loadDataFromSheet() {
                 const phone = (row.phone || 'မရှိပါ').trim();
 
                 if (!isNaN(lat) && !isNaN(lng) && name) {
-                    // အရောင်သတ်မှတ်ခြင်း
                     const iconToUse = icons[type] || createIcon('blue');
-
-                    // Marker ဖန်တီးခြင်း
                     const marker = L.marker([lat, lng], { icon: iconToUse })
                         .bindPopup(`<b>${name}</b><br>📍 ${address}<br>📞 ${phone}`);
                     
                     marker.addTo(map);
-
-                    // Filter အတွက် သိမ်းဆည်းခြင်း
                     allMarkers.push({ marker, type, name, address, phone, lat, lng });
-                    // Search အတွက် သိမ်းဆည်းခြင်း
-                    locations.push({ name, lat, lng, phone, address });
 
-                    // Autocomplete အတွက် ထည့်ခြင်း
-                    const option = document.createElement('option');
-                    option.value = name;
-                    dataList.appendChild(option);
+                    if(dataList) {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        dataList.appendChild(option);
+                    }
                 }
             });
-            console.log("Loaded:", locations.length, "locations");
-        },
-        error: function(err) {
-            console.error("CSV error:", err);
         }
     });
 }
 
-// ၇။ Category Filter Logic
+// ၆။ ရှာဖွေခြင်း (Search Btn Error ကင်းအောင် ပြင်ဆင်ထားသည်)
+const searchBtn = document.getElementById('searchBtn');
+if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const target = allMarkers.find(m => m.name.toLowerCase().includes(query));
+
+        if (target) {
+            map.flyTo([target.lat, target.lng], 17);
+            target.marker.openPopup();
+        } else {
+            alert("ရှာမတွေ့ပါ၊ အမည်ပြန်စစ်ပေးပါ။");
+        }
+    });
+}
+
+// ၇။ Category Filter ခလုတ်များ
 document.querySelectorAll('.category-btn').forEach(button => {
     button.addEventListener('click', () => {
-        // Active class ပြောင်းလဲခြင်း
         document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
 
-        const selectedCategory = button.getAttribute('data-category');
-
+        const selected = button.getAttribute('data-category');
         allMarkers.forEach(item => {
-            if (selectedCategory === 'all' || item.type === selectedCategory) {
+            if (selected === 'all' || item.type === selected) {
                 map.addLayer(item.marker);
             } else {
                 map.removeLayer(item.marker);
@@ -126,27 +123,13 @@ document.querySelectorAll('.category-btn').forEach(button => {
     });
 });
 
-// ၈။ ရှာဖွေခြင်း Logic
-document.getElementById('searchBtn').addEventListener('click', () => {
-    const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const target = allMarkers.find(l => l.name.toLowerCase().includes(q));
-    
-    if (target) {
-        map.flyTo([target.lat, target.lng], 17);
-        L.popup().setLatLng([target.lat, target.lng])
-            .setContent(`<b>${target.name}</b><br>📍 ${target.address}<br>📞 ${target.phone}`)
-            .openOn(map);
-    } else {
-        alert("တောင်းပန်ပါသည်။ ရှာမတွေ့ပါ။");
-    }
-});
-
-// ၉။ မြို့နယ်ရွေးချယ်ခြင်း
-document.getElementById('townshipSelect').addEventListener('change', (e) => {
-    const key = e.target.value.toLowerCase();
-    if (TOWNSHIPS[key]) {
-        map.setView(TOWNSHIPS[key], 13);
-    }
-});
+// ၈။ မြို့နယ်ရွေးချယ်ခြင်း
+const townshipSelect = document.getElementById('townshipSelect');
+if (townshipSelect) {
+    townshipSelect.addEventListener('change', (e) => {
+        const center = TOWNSHIPS[e.target.value];
+        if (center) map.setView(center, 13);
+    });
+}
 
 loadDataFromSheet();
