@@ -1,7 +1,7 @@
-// Google Sheet CSV Link
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiAnasNC6vLjb4IChJ5Vzj_GLcRKGBx8q-22DUsquCeuzCzfdNxG821SfCnWnA83-q2AdeqTiJLuOn/pub?output=csv";
+// ၁။ Google Sheet CSV Link
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiAnasNC6vLjb4lChJ5Vzj_GLcRKGBx8q-22DUsqCeuzCzfdNxG821SfCnWnaA83-q2AdeqTiJLu0n/pub?output=csv";
 
-// မြို့နယ်ဗဟိုချက်များ (lowercase keys)
+// ၂။ မြို့နယ်ဗဟိုချက်များ
 const TOWNSHIPS = {
   myitkyina: [25.3833, 97.3833],
   waingmaw: [25.3562, 97.4332],
@@ -18,76 +18,63 @@ const TOWNSHIPS = {
   chiphawe: [25.9, 97.5],
   sawtlaw: [26.1, 97.6],
   injyanyan: [25.8, 97.4],
-  machambaw: [27.0, 97.3],
+  machambaw: [27.0, 97.3],  
   putao: [27.3333, 97.4167]
+  // လိုအပ်သော မြို့နယ်များ ထပ်ထည့်နိုင်သည်
 };
 
-// Map initialize
+// ၃။ Map Initialize
 const map = L.map('map').setView(TOWNSHIPS.myitkyina, 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-// Marker icon generator
-const createIcon = (color) => new L.Icon({
-  iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-const defaultIcon = createIcon('blue');
-
 let locations = [];
 
-// PapaParse header-based parsing
+// ၄။ Papa.parse ကို သုံးပြီး ဒေတာဖတ်ခြင်း (ဒီအပိုင်းကို ပြင်လိုက်တာပါ)
 function loadDataFromSheet() {
   Papa.parse(sheetUrl, {
     download: true,
-    header: true,
+    header: true, // ဇယားထိပ်ဆုံးက name, lat, lng စတာတွေကို သုံးဖို့ true ထားရမည်
     skipEmptyLines: true,
     complete: function(results) {
       const data = results.data;
       const dataList = document.getElementById('locationList');
-      dataList.innerHTML = '';
+      dataList.innerHTML = ''; // အဟောင်းများကို ရှင်းထုတ်ရန်
 
       data.forEach(row => {
+        // ဇယားထဲက header အမည်များအတိုင်း ဆွဲထုတ်ခြင်း
         const name = (row.name || '').trim();
-        const type = (row.type || '').trim().toLowerCase();
-        const lat = parseFloat(row.lat || '');
-        const lng = parseFloat(row.lng || '');
-        const township = (row.township || '').trim().toLowerCase();
-        const color = (row.color || '').trim().toLowerCase();
-        const address = (row.address || '').trim();
+        const lat = parseFloat(row.lat);
+        const lng = parseFloat(row.lng);
         const phone = (row.phone || 'မရှိပါ').trim();
 
         if (!isNaN(lat) && !isNaN(lng) && name) {
-          const icon = color ? createIcon(color) : defaultIcon;
+          // မြေပုံပေါ်တွင် Marker ချခြင်း
+          L.marker([lat, lng]).addTo(map)
+            .bindPopup(`<b>${name}</b><br>📞 ${phone}`);
 
-          L.marker([lat, lng], { icon }).addTo(map)
-            .bindPopup(`<b>${name}</b><br>${address}<br>📞 ${phone}`);
-
+          // ရှာဖွေမှုစာရင်း (Autocomplete) ထဲသို့ ထည့်ခြင်း
           const option = document.createElement('option');
           option.value = name;
           dataList.appendChild(option);
 
-          locations.push({ name, type, lat, lng, township, phone });
+          // ဒေတာသိမ်းဆည်းခြင်း
+          locations.push({ name, lat, lng, phone });
         }
       });
-      console.log("Loaded", locations.length, "locations");
+      console.log("ဒေတာများ အောင်မြင်စွာ ရောက်ရှိလာပါပြီ။ စုစုပေါင်း:", locations.length);
     },
     error: function(err) {
-      console.error("CSV parse error", err);
+      console.error("CSV ဖတ်ရာတွင် အမှားရှိနေပါသည်:", err);
     }
   });
 }
 
-// Search logic (case-insensitive, partial match)
+// ၅။ ရှာဖွေခြင်း Logic
 document.getElementById('searchBtn').addEventListener('click', () => {
   const q = document.getElementById('searchInput').value.trim().toLowerCase();
-  if (!q) return alert("ရှာမည့် စာလုံးထည့်ပါ။");
-
+  // တစ်စိတ်တစ်ပိုင်းတူရုံဖြင့် ရှာပေးသော Logic
   const target = locations.find(l => l.name.toLowerCase().includes(q));
+  
   if (target) {
     map.flyTo([target.lat, target.lng], 17);
     L.popup().setLatLng([target.lat, target.lng])
@@ -98,7 +85,7 @@ document.getElementById('searchBtn').addEventListener('click', () => {
   }
 });
 
-// Township select → map center change
+// ၆။ မြို့နယ်ရွေးချယ်ခြင်း
 document.getElementById('townshipSelect').addEventListener('change', (e) => {
   const key = e.target.value.toLowerCase();
   if (TOWNSHIPS[key]) {
@@ -106,5 +93,5 @@ document.getElementById('townshipSelect').addEventListener('change', (e) => {
   }
 });
 
-// Load data
+// ဒေတာကို စတင် Load လုပ်ရန် ခေါ်ယူခြင်း
 loadDataFromSheet();
