@@ -4,22 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kachin State Map - Myitkyina & Beyond</title>
+  
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
+
   <header>
-    <div class="header-container">
-      <h1>Kachin State Map</h1>
-      <p class="subtitle">ကချင်ပြည်နယ်မြေပုံနှင့် လမ်းညွှန်</p>
+    <div class="header-top">
+      <div class="language-switch">
+        <button onclick="changeLang('mm')" id="mmBtn" class="lang-btn active">MM</button>
+        <button onclick="changeLang('en')" id="enBtn" class="lang-btn">EN</button>
+      </div>
+      <button id="darkModeToggle" class="dark-btn">🌙 Dark Mode</button>
     </div>
-    <div class="language-switch">
-      <button class="lang-btn active">မြန်မာ</button>
-      <button class="lang-btn">English</button>
+    <div class="header-container">
+      <h1 id="mainTitle">Kachin State Map</h1>
+      <p id="subTitle" class="subtitle">ကချင်ပြည်နယ်မြေပုံနှင့် လမ်းညွှန်</p>
     </div>
   </header>
 
@@ -29,21 +35,22 @@
         <option value="myitkyina">မြစ်ကြီးနား (Myitkyina)</option>
         <option value="waingmaw">ဝိုင်းမော် (Waingmaw)</option>
         <option value="bhamo">ဗန်းမော် (Bhamo)</option>
-	<option value="mogaung">မိုးကောင်း (Mogaung)</option>                
-	<option value="moenhyin">မိုးညှင်း (Moenhyin)</option>
+        <option value="mogaung">မိုးကောင်း (Mogaung)</option>                
+        <option value="moenhyin">မိုးညှင်း (Moenhyin)</option>
         <option value="hophin">ဟိုပင် (Hophin)</option>
         <option value="hparkant">ဖားကန့် (Hparkant)</option>
         <option value="tanine">တနိုင်း (Tanine)</option>
-	<option value="sumprabum">ဆွမ်ပရာဘွမ် (Sumprabum)</option>
+        <option value="sumprabum">ဆွမ်ပရာဘွမ် (Sumprabum)</option>
         <option value="sinbo">ဆင်ဘို (Sinbo)</option>
         <option value="panwar">ပန်ဝါ (Panwar)</option>
         <option value="kanpite">ကန်ပိုက်တီ (Kanpite)</option>
-	<option value="chiphawe">ချီဖွေ (Chiphawe)</option>
+        <option value="chiphawe">ချီဖွေ (Chiphawe)</option>
         <option value="sawtlaw">ဆော့လော် (Sawtlaw)</option>
         <option value="injyanyan">အင်ဂျန်းယန် (Injyanyan)</option>
         <option value="machambaw">မချမ်းဘော (Machawmbaw)</option>
         <option value="putao">ပူတာအို (Putao)</option>
       </select>
+      
       <input type="text" id="searchInput" placeholder="လုပ်ငန်းအမည် သို့မဟုတ် ရပ်ကွက်..." list="locationList">
       <datalist id="locationList"></datalist>
       <button id="searchBtn">ရှာဖွေမည်</button>
@@ -64,34 +71,48 @@
       <button class="category-btn" data-category="bus">🚌 ကားဂိတ်များ</button>
       <button class="category-btn" data-category="phone">📱 ဖုန်းဆိုင်များ</button>
       <button class="category-btn" data-category="property">🏠 အိမ်ခြံမြေ</button>   
-</div>
+    </div>
   </section>
 
-  <section class="map-section">
-    <div id="map"></div>
-  </section>
+  <div id="map" style="height: 500px; width: 100%; margin-top: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"></div>
 
   <section class="business-section">
     <div class="business-container">
-      <h2>သင့်လုပ်ငန်းကို မြေပုံပေါ်တင်လိုပါသလား?</h2>
+      <h2 id="pricingTitle">သင့်လုပ်ငန်းကို မြေပုံပေါ်တင်လိုပါသလား?</h2>
       <div class="pricing-cards">
+        
         <div class="card">
           <h3>Regular</h3>
           <p class="price">၅,၀၀၀ ကျပ် / လ</p>
-          <ul><li>အမည်၊ လိပ်စာ၊ တည်နေရာ</li></ul>
+          <ul>
+            <li>အမည်၊ လိပ်စာ၊ တည်နေရာ</li>
+            <li>အပြာရောင် Marker Icon</li>
+          </ul>
+          <a href="tel:09267298584" class="contact-btn">ဆက်သွယ်ရန်</a>
         </div>
+
         <div class="card gold">
-          <h3>Gold</h3>
+          <h2>Gold Plan</h2>
           <p class="price">၁၀,၀၀၀ ကျပ် / လ</p>
-          <ul><li>ဖုန်းနံပါတ် နှင့် ဓာတ်ပုံ (၁) ပုံ</li></ul>
+          <p>ရွှေရောင် Icon နှင့် ဓာတ်ပုံ (၁) ပုံ ပါဝင်မည်။</p>
+          <div class="images">
+            <img src="https://drive.google.com/uc?export=view&id=1XUd8lYhUSVxtpV2KuKz-cqxpZCtT0Fla" alt="Gold Image">
+          </div>
+          <a href="https://m.me/yourmessengerlink" class="contact-btn">Messenger</a>
         </div>
+
         <div class="card platinum">
-          <h3>Platinum</h3>
+          <h2>Platinum Plan</h2>
           <p class="price">၁၅,၀၀၀ ကျပ် / လ</p>
-          <ul><li>ထိပ်ဆုံးတွင်ပြသခြင်း နှင့် ဓာတ်ပုံစုံ</li></ul>
+          <p>⭐ Icon၊ ထိပ်ဆုံးတွင်ပြသခြင်း နှင့် ဓာတ်ပုံ (၅) ပုံအထိ။</p>
+          <div class="images">
+            <img src="https://drive.google.com/uc?export=view&id=1XUd8lYhUSVxtpV2KuKz-cqxpZCtT0Fla" alt="Platinum Image 1">
+          </div>
+          <a href="https://m.me/yourmessengerlink" class="contact-btn">Messenger</a>
         </div>
+
       </div>
-      <a href="tel:09267298584" class="contact-btn">📞 ဆက်သွယ်ရန်: ၀၉-၂၆၇၂၉၈၅၈၄</a>
+      <p style="margin-top: 20px; font-weight: bold;">📞 ဆက်သွယ်ရန်: ၀၉-၂၆၇၂၉၈၅၈၄</p>
     </div>
   </section>
 
