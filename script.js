@@ -94,13 +94,13 @@ function loadDataFromSheet() {
                     const marker = L.marker([lat, lng], { icon: createIcon(color, isPremium) });
 
                     // 🖼️ Image Popup Layout
-                    const popupContent = `
-                        <div class="custom-popup" style="text-align:center; min-width:150px;">
-                            ${image ? `<img src="${image}" style="width:100%; height:100px; object-fit:cover; border-radius:8px; margin-bottom:5px;">` : ''}
-                            <h3 style="margin:5px 0;">${name} ${level === 'platinum' ? '⭐' : ''}</h3>
-                            <p style="margin:0;">📍 ${(row.address || 'မရှိပါ')}</p>
-                            <p style="margin:5px 0; font-weight:bold; color:#27ae60;">📞 ${(row.phone || 'မရှိပါ')}</p>
-                        </div>
+		    const popupContent = `
+                        <div class="custom-popup" style="text-align:center; min-width:180px;">
+                            ${image ? `<img src="${image}" class="popup-img" onerror="this.src='https://via.placeholder.com/150?text=No+Image';">` : ''}
+        		    <h3 style="margin:8px 0 5px; font-size:16px;">${name} ${level === 'platinum' ? '⭐' : ''}</h3>
+                            <p style="margin:2px 0; font-size:13px; color:#555;">📍 ${(row.address || 'မရှိပါ')}</p>
+                            <p style="margin:5px 0; font-weight:bold; color:#27ae60; font-size:14px;">📞 ${(row.phone || 'မရှိပါ')}</p>
+                         </div>
                     `;
                     marker.bindPopup(popupContent);
                     marker.addTo(map);
