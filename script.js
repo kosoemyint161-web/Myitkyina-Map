@@ -93,15 +93,20 @@ function loadDataFromSheet() {
                     
                     const marker = L.marker([lat, lng], { icon: createIcon(color, isPremium) });
 
-                    // 🖼️ Image Popup Layout
-		    const popupContent = `
-                        <div class="custom-popup" style="text-align:center; min-width:180px;">
-                            ${image ? `<img src="${image}" class="popup-img" onerror="this.src='https://via.placeholder.com/150?text=No+Image';">` : ''}
-        		    <h3 style="margin:8px 0 5px; font-size:16px;">${name} ${level === 'platinum' ? '⭐' : ''}</h3>
-                            <p style="margin:2px 0; font-size:13px; color:#555;">📍 ${(row.address || 'မရှိပါ')}</p>
-                            <p style="margin:5px 0; font-weight:bold; color:#27ae60; font-size:14px;">📞 ${(row.phone || 'မရှိပါ')}</p>
-                         </div>
-                    `;
+                   // 🖼️ Image Popup Layout
+                   const popupContent = `
+                       <div class="custom-popup" style="text-align:center; min-width:180px;">
+                           <div style="width:100%; height:120px; background:#f0f0f0; border-radius:8px; overflow:hidden; margin-bottom:8px; display:flex; align-items:center; justify-content:center;">
+                               ${image ? 
+                                   `<img src="${image}" class="popup-img" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<p style=font-size:12px;color:#999;>Image Error</p>';">` : 
+                                   `<p style="font-size:12px; color:#999;">No Image Available</p>`
+                               }
+                           </div>
+                           <h3 style="margin:5px 0; font-size:16px;">${name} ${level === 'platinum' ? '⭐' : ''}</h3>
+                           <p style="margin:2px 0; font-size:13px; color:#555;">📍 ${(row.address || 'မရှိပါ')}</p>
+                           <p style="margin:5px 0; font-weight:bold; color:#27ae60; font-size:14px;">📞 ${(row.phone || 'မရှိပါ')}</p>
+                      </div>
+                   `;
                     marker.bindPopup(popupContent);
                     marker.addTo(map);
 
